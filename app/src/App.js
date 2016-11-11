@@ -31,13 +31,16 @@ class TodoList extends Component {
         this.setFilter = this.setFilter.bind(this);
         this.filterItems = this.filterItems.bind(this);
         this.getListItem = this.getListItem.bind(this);
-        // this.handleChecked = this.handleChecked.bind(this);
+        this.toggleAllChecked = this.toggleAllChecked.bind(this);
+
+        // this.handleItemChecked = this.handleItemChecked.bind(this);
         this.state = {
             todos: [
                 {id: 1, text: 'Item 1', completed: true},
                 {id: 2, text: 'Item 2', completed: false}
             ],
-            filter: 'All'
+            filter: 'All',
+            allChecked: false
         }
     }
 
@@ -53,7 +56,7 @@ class TodoList extends Component {
         this.setState({todos: this.state.todos.concat([item])});
     }
 
-    handleChecked(item) {
+    handleItemChecked(item) {
         //debugger;
         item.completed = !item.completed;
         // this.setState({todos: this.state.todos});
@@ -74,9 +77,20 @@ class TodoList extends Component {
         //debugger;
         return (
             <ListItem name={item.id} checked={item.completed} text={item.text}
-                      key={item.id} onchange={this.handleChecked.bind(this, item)}
+                      key={item.id} onchange={this.handleItemChecked.bind(this, item)}
                       handleRemove={this.removeItem.bind(this, item)}/>
         )
+    }
+
+    toggleAllChecked(e) {
+        //debugger;
+        var state = e.target.checked;
+        //debugger;
+        for (var i = 0; i < this.state.todos.length; i++) {
+            //debugger;
+            this.state.todos[i].completed = state;
+        }
+        this.setState({});
     }
 
     filterItems (item) {
@@ -92,10 +106,10 @@ class TodoList extends Component {
     }
 
     render() {
-        //debugger;
+        // debugger;
         return (
             <div>
-                <TodoInput save={this.save}/>
+                <TodoInput save={this.save} checked={this.state.allChecked} handleToggle={this.toggleAllChecked}/>
                 {this.state.todos.filter(this.filterItems).map(this.getListItem)}
                 <ItemFilters setFilter={this.setFilter} itemNumber={this.state.todos.length}/>
             </div>
@@ -125,7 +139,8 @@ class TodoInput extends Component{
     render() {
         return (
             <div>
-                <input type="checkbox" check={props.checked} onChange={props.handleToggle} />
+                {/*<input type="checkbox" checked={this.props.checked} onChange={this.props.handleToggle} />*/}
+                <input type="checkbox" onChange={this.props.handleToggle} />
                 <input type="text" onKeyDown={this.handleKeyDown} />
             </div>
         )
