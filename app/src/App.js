@@ -15,6 +15,7 @@ function ListItem (props) {
 function ItemFilters (props) {
     return (
         <div>
+            <span> {props.itemNumber} items left </span>
             <button onClick={props.setFilter}>All</button>
             <button onClick={props.setFilter}>Active</button>
             <button onClick={props.setFilter}>Completed</button>
@@ -96,7 +97,7 @@ class TodoList extends Component {
             <div>
                 <TodoInput save={this.save}/>
                 {this.state.todos.filter(this.filterItems).map(this.getListItem)}
-                <ItemFilters setFilter={this.setFilter} />
+                <ItemFilters setFilter={this.setFilter} itemNumber={this.state.todos.length}/>
             </div>
         );
     }
@@ -123,7 +124,10 @@ class TodoInput extends Component{
 
     render() {
         return (
-            <input type="text" onKeyDown={this.handleKeyDown} />
+            <div>
+                <input type="checkbox" check={props.checked} onChange={props.handleToggle} />
+                <input type="text" onKeyDown={this.handleKeyDown} />
+            </div>
         )
     }
 }
