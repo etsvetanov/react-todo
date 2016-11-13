@@ -30,7 +30,7 @@ class TodoList extends Component {
         this.save = this.save.bind(this);
         this.setFilter = this.setFilter.bind(this);
         this.filterItems = this.filterItems.bind(this);
-        this.getListItem = this.getListItem.bind(this);
+        this.makeListItem = this.makeListItem.bind(this);
         this.toggleAllChecked = this.toggleAllChecked.bind(this);
 
         // this.handleItemChecked = this.handleItemChecked.bind(this);
@@ -39,7 +39,7 @@ class TodoList extends Component {
                 {id: 1, text: 'Item 1', completed: true},
                 {id: 2, text: 'Item 2', completed: false}
             ],
-            filter: 'All',
+            filter: '`',
             allChecked: false
         }
     }
@@ -73,7 +73,7 @@ class TodoList extends Component {
         }
     }
 
-    getListItem (item) {
+    makeListItem (item) {
         //debugger;
         return (
             <ListItem name={item.id} checked={item.completed} text={item.text}
@@ -105,13 +105,23 @@ class TodoList extends Component {
         return true;
     }
 
+
+
     render() {
         // debugger;
+        let list_box = null;
+        let filter_box = null;
+
+        if (this.state.todos.length) {
+            list_box = this.state.todos.filter(this.filterItems).map(this.makeListItem);
+            filter_box = <ItemFilters setFilter={this.setFilter} itemNumber={this.state.todos.length}/>
+        }
+
         return (
             <div>
                 <TodoInput save={this.save} checked={this.state.allChecked} handleToggle={this.toggleAllChecked}/>
-                {this.state.todos.filter(this.filterItems).map(this.getListItem)}
-                <ItemFilters setFilter={this.setFilter} itemNumber={this.state.todos.length}/>
+                {list_box}
+                {filter_box}
             </div>
         );
     }
