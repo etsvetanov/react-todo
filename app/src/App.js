@@ -33,19 +33,25 @@ class TodoList extends Component {
         this.makeListItem = this.makeListItem.bind(this);
         this.toggleAllChecked = this.toggleAllChecked.bind(this);
 
+        this.filters = {
+            'All': this.filterAll,
+            'Active': this.filterActive,
+            'Completed': this.filterCompleted
+        }
         // this.handleItemChecked = this.handleItemChecked.bind(this);
         this.state = {
             todos: [
                 {id: 1, text: 'Item 1', completed: true},
                 {id: 2, text: 'Item 2', completed: false}
             ],
-            filter: '`',
+            filter: this.filterAll,
             allChecked: false
         }
     }
 
     setFilter(e) {
-        this.setState({filter: e.target.innerHTML});
+        debugger;
+        this.setState({filter: this.filters[e.target.innerHTML]});
 
         // console.log('This is the event:', e);
         // console.log('target.value:', e.target.innerHTML);
@@ -93,6 +99,18 @@ class TodoList extends Component {
         this.setState({});
     }
 
+    filterAll(item) {
+        return true;
+    }
+
+    filterActive(item) {
+        return !item.completed;
+    }
+
+    filterCompleted(item) {
+        return item.completed;
+    }
+
     filterItems (item) {
         if (this.state.filter == 'Active' && item.completed) {
             return false;
@@ -113,7 +131,7 @@ class TodoList extends Component {
         let filter_box = null;
 
         if (this.state.todos.length) {
-            list_box = this.state.todos.filter(this.filterItems).map(this.makeListItem);
+            list_box = this.state.todos.filter(this.state.filter).map(this.makeListItem);
             filter_box = <ItemFilters setFilter={this.setFilter} itemNumber={this.state.todos.length}/>
         }
 
