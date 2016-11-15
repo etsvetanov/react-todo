@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import logo from './logo.svg';
 import './App.css';
-
+import TodoStore from './stores/TodoStore';
+import * as TodoActions from './actions/TodoActions';
 
 function ListItem (props) {
     return (
@@ -29,7 +30,7 @@ class TodoList extends Component {
         this.counter = 10;
         this.save = this.save.bind(this);
         this.setFilter = this.setFilter.bind(this);
-        this.filterItems = this.filterItems.bind(this);
+        // this.filterItems = this.filterItems.bind(this);
         this.makeListItem = this.makeListItem.bind(this);
         this.toggleAllChecked = this.toggleAllChecked.bind(this);
 
@@ -37,13 +38,10 @@ class TodoList extends Component {
             'All': this.filterAll,
             'Active': this.filterActive,
             'Completed': this.filterCompleted
-        }
+        };
 
         this.state = {
-            todos: [
-                {id: 1, text: 'Item 1', completed: true},
-                {id: 2, text: 'Item 2', completed: false}
-            ],
+            todos: TodoStore.getAll(),
             filter: this.filterAll,
             allChecked: false
         }
@@ -102,19 +100,27 @@ class TodoList extends Component {
         return item.completed;
     }
 
-    filterItems (item) {
-        if (this.state.filter == 'Active' && item.completed) {
-            return false;
-        }
 
-        if (this.state.filter == 'Completed' && !item.completed) {
-            return false;
-        }
 
-        return true;
+    // filterItems (item) {
+    //     if (this.state.filter == 'Active' && item.completed) {
+    //         return false;
+    //     }
+    //
+    //     if (this.state.filter == 'Completed' && !item.completed) {
+    //         return false;
+    //     }
+    //
+    //     return true;
+    // }
+
+    componentWillMount() {
+        TodoStore.on('change', () => {
+            this.setState({
+                todos: TodoStore.getAll()
+            });
+        })
     }
-
-
 
     render() {
         let list_box = null;
@@ -141,15 +147,18 @@ class TodoInput extends Component{
         this.handleKeyDown = this.handleKeyDown.bind(this);
     }
 
+
     handleKeyDown(e) {
         if (e.keyCode !== 13) { return; }
 
         event.preventDefault();
 
-        this.props.save({
-            text: e.target.value,
-            completed:false
-        });
+        // this.props.save({
+        //     text: e.target.value,
+        //     completed:false
+        // });
+        let text = e.target.value;
+        TodoActions.createTodo(text);
 
         e.target.value = "";
     }
@@ -174,5 +183,7 @@ class App extends Component {
         );
     }
 }
+
+
 
 export default App;
