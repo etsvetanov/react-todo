@@ -10,26 +10,23 @@ class TodoStore extends EventEmitter {
     constructor() {
         super();
 
-        this.todos = [
-            {
-                id: 11111,
+        this.todos = {
+            11111: {
                 text: 'Item 1',
                 completed: true
             },
-            {
-                id: 22222,
+            22222: {
                 text: 'Item 2',
                 completed: false
             }
-        ];
+        };
 
         this.filters = {
-            // 'All': this.filterAll,
             'Active': this.filterActive,
             'Completed': this.filterCompleted
         };
 
-        this.filterMethod= null;
+        this.filterMethod = null;
     }
 
 
@@ -44,43 +41,34 @@ class TodoStore extends EventEmitter {
     createTodo(text) {
         let id = Date.now();
 
-        this.todos.push({
-            id,
+        this.todos[id] = {
             text,
             completed: false
-        });
+        };
+
 
         console.log('createTodo is going to emit \'change\' event...');
         this.emit('change');
     }
 
 
-    deleteTodo(item) {
-        var index = this.todos.indexOf(item);
-
-        if (index > -1) {
-            this.todos.splice(index, 1);
-        }
-
+    deleteTodo(id) {
+        delete this.todos[id];
         this.emit('change');
     }
 
-    updateTodo(item) {
-        this.todos.forEach(function(element) {
-            if (item.id === element.id) {
-                element.id = item.id;
-                element.text = item.text;
-                element.completed = item.completed;
-            }
-        });
-
+    updateTodo(id, item) {
+        this.todos[id] = {item};
         this.emit('change');
     }
 
     toggleAll(completed) {
-        this.todos.forEach(function(item) {
-            item.completed = completed;
-        });
+        for (let property in this.todos) {
+            if (this.todos.hasOwnProperty(property)) {
+                this.todos[property].completed = completed;
+            }
+        }
+
         this.emit('change');
     }
 
@@ -95,6 +83,8 @@ class TodoStore extends EventEmitter {
 
     getAll() {
         if (this.filterMethod) {
+            let ids = Object.keys(this.todos);
+            
             return this.todos.filter(this.filterMethod);
         }
 
@@ -112,7 +102,7 @@ class TodoStore extends EventEmitter {
                 this.createTodo(action.text);
                 break;
             case actionTypes.DELETE:
-                this.deleteTodo(action.item);
+                this.deleteTodo(action.id);
                 break;
             case actionTypes.UPDATE:
                 this.updateTodo(action.item);

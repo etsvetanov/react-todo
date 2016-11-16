@@ -10,18 +10,19 @@ var todoActions = {
       });
   },
 
-  delete: function(item) {
+  delete: function(id) {
       Dispatcher.dispatch({
           type: ActionTypes.DELETE,
-          item: item
+          id: id
       })
   },
 
-  update: function (item) {
+  update: function (id, item) {
       console.log('update action fired!');
       Dispatcher.dispatch({
           type: ActionTypes.UPDATE,
-          item: item
+          item: item,
+          id: id
       })
   },
 

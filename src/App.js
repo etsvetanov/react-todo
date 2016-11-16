@@ -16,7 +16,7 @@ function ListItem (props) {
         <div>
             <input type="checkbox" name={props.id} checked={props.checked}
                    onChange={() => { handleChange({completed: !item.completed}); }}/> {props.text}
-            <button onClick={() => {todoActions.delete(item)}}> x </button>
+            <button onClick={() => {todoActions.delete(props.id)}}> x </button>
         </div>
     );
 }
@@ -87,30 +87,33 @@ class TodoList extends Component {
 
     onChange() {
         this.setState({todos: todoStore.getAll()});
-        this.setState({count: todoStore.getNumber()})
+        this.setState({count: todoStore.getNumber()});
     }
 
 
-    renderTodoItem (item) {
+    renderTodoItem (id) {
+        let item = this.state.todos[id];
         return (
-            <ListItem name={item.id} checked={item.completed} text={item.text}
-                      key={item.id} item={item} />
+            <ListItem name={id} checked={item.completed} text={item.text}
+                      key={id} id={id} />
         )
     }
 
     render() {
-        let list_box = null;
+        let list_items = null;
         let filter_box = null;
 
-        if (this.state.todos.length) {
-            list_box = this.state.todos.map(this.renderTodoItem);
+        let ids = Object.keys(this.state.todos);
+
+        if (ids.length) {
+            list_items = ids.map(this.renderTodoItem);
             filter_box = <ItemFilters setFilter={this.setFilter} itemNumber={this.state.count}/>
         }
 
         return (
             <div>
                 <TodoInput checked={this.state.allChecked} />
-                {list_box}
+                {list_items}
                 {filter_box}
             </div>
         );
