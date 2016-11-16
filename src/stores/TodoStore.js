@@ -53,6 +53,7 @@ class TodoStore extends EventEmitter {
 
 
     deleteTodo(id) {
+        debugger;
         delete this.todos[id];
         this.emit('change');
     }
@@ -63,6 +64,7 @@ class TodoStore extends EventEmitter {
     }
 
     toggleAll(completed) {
+        debugger;
         for (let property in this.todos) {
             if (this.todos.hasOwnProperty(property)) {
                 this.todos[property].completed = completed;
@@ -82,18 +84,21 @@ class TodoStore extends EventEmitter {
     }
 
     getAll() {
+        let ids = Object.keys(this.todos);
+        let mapper = (id) => ({
+            id: id,
+            text: this.todos[id].text,
+            completed: this.todos[id].text});
+
+        let arr = ids.map(mapper);
+
         if (this.filterMethod) {
-            let ids = Object.keys(this.todos);
-            
-            return this.todos.filter(this.filterMethod);
+            arr = arr.filter(this.filterMethod);
         }
 
-        return this.todos;
+        return arr.sort((a, b) => a.id - b.id);
     }
 
-    getNumber() {
-        return this.todos.length;
-    }
 
     handleActions(action) {
         console.log('Store received an action:', action);
@@ -105,7 +110,7 @@ class TodoStore extends EventEmitter {
                 this.deleteTodo(action.id);
                 break;
             case actionTypes.UPDATE:
-                this.updateTodo(action.item);
+                this.updateTodo(action.id, action.item);
                 break;
             case actionTypes.TOGGLEALL:
                 this.toggleAll(action.completed);
