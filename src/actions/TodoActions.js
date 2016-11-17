@@ -18,7 +18,7 @@ var todoActions = {
   },
 
   update: function (id, item) {
-      console.log('update action fired!');
+
       Dispatcher.dispatch({
           type: ActionTypes.UPDATE,
           item: item,

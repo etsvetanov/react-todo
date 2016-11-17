@@ -53,32 +53,34 @@ class TodoStore extends EventEmitter {
 
 
     deleteTodo(id) {
-        debugger;
         delete this.todos[id];
-        this.emit('change');
+        this.emit(CHANGE_EVENT);
     }
 
     updateTodo(id, item) {
-        this.todos[id] = {item};
-        this.emit('change');
+
+        this.todos[id] = item;
+        this.emit(CHANGE_EVENT);
     }
 
     toggleAll(completed) {
-        debugger;
+
         for (let property in this.todos) {
+
             if (this.todos.hasOwnProperty(property)) {
+
                 this.todos[property].completed = completed;
             }
         }
 
-        this.emit('change');
+        this.emit(CHANGE_EVENT);
     }
 
     setFilter(filter) {
         filter = filter || null;
         if (this.filters[filter] !== this.filterMethod) {
             this.filterMethod = this.filters[filter];
-            this.emit('change');
+            this.emit(CHANGE_EVENT);
         }
 
     }
@@ -88,7 +90,7 @@ class TodoStore extends EventEmitter {
         let mapper = (id) => ({
             id: id,
             text: this.todos[id].text,
-            completed: this.todos[id].text});
+            completed: this.todos[id].completed});
 
         let arr = ids.map(mapper);
 
@@ -97,6 +99,10 @@ class TodoStore extends EventEmitter {
         }
 
         return arr.sort((a, b) => a.id - b.id);
+    }
+
+    getCount() {
+        return Object.keys(this.todos).length;
     }
 
 
